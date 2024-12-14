@@ -32,4 +32,4 @@ jobs:
             POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
             POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
             POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
-            POSTGRES_PORT: ${{ var.POSTGRES_PORT }}
+            POSTGRES_PORT: ${{ vars.POSTGRES_PORT }}
