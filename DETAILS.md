@@ -155,3 +155,4 @@ But i was able to connect to the application and talk to the api and that was th
 
 ## CICD
 
+In order to build the pipeline the dockerfile had to be modified to accept ARGS and ENVS that way we pass in sensitive information like, DB credentials, securily.
