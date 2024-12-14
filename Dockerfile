@@ -43,7 +43,6 @@ COPY --from=builder /app/nft_scraper .
 
 # Copy any necessary files like the .env and the CSV data directory
 COPY --from=builder /app/data ./data
-COPY --from=builder /app/.env .
 
 # Set permissions for non-root user
 RUN chown -R blockparty:g-blockparty /app && chmod +x /app/nft_scraper
