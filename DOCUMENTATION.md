@@ -196,7 +196,8 @@ To use this setup manually you can use these commands if you want to execute the
 As we are creating splitted state files for better management the order of the modules matter, specially if we are using dependencies from others. For this setup I removed any dependencies and that is one of the reasons the apply would not work, but anyways, make sure you follow this order to plan the modules:
 
 1. VPC
-3. ECS
+2. ECS
+3. RDS
 4. ECS_SERVICE
 
 To facilitate the process I created a Taskfile with automated tasks, if you run those tasks in this order you will be able to test the terraform code.
@@ -214,3 +215,7 @@ Tasks:
 5. `task dev-plan-all`
 
 **The apply is not fully working because would incur in charges on my account, a few tweaks would be needed in order to be able to apply.**
+
+## Architecture Diagram
+
+![Solution architecture](architecture_diagram.drawio.png "Solution architecture")
