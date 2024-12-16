@@ -1,0 +1,63 @@
+core_env_name: blockparty-production
+environment: prd
+regions:
+  us:
+    - us-east-1
+azs:
+  us-east-1:
+    - us-east-1a
+    - us-east-1b
+    - us-east-1c
+
+modules:
+  vpc:
+    vars:
+      enabled: true
+      cidr_block: "10.40.0.0/16"
+      public_subnets:
+        - "10.40.1.0/24"
+        - "10.40.2.0/24"
+        - "10.40.3.0/24"
+      private_subnets:
+        - "10.40.11.0/24"
+        - "10.40.12.0/24"
+        - "10.40.13.0/24"
+      enable_dns_hostnames: false
+      map_public_ip_on_launch: true
+      enable_nat_gateway: true
+      single_nat_gateway: true
+      one_nat_gateway_per_az: false
+  ecs:
+    vars:
+      enabled: true
+  rds:
+    vars:
+      enabled: true
+      name: blockparty
+      engine: "postgres"
+      engine_version: "16.3"
+      instance_class: "db.t2.micro"
+      allocated_storage: 1
+      db_name: blockparty
+      username: blockparty
+      port: "5432"
+      family: "postgres16"
+      subnet_ids:
+        - subnet-12345678
+        - subnet-87654321
+        - subnet-87654111
+  ecs_service:
+    vars:
+      enabled: true
+      dns_name: app
+      domain: prd.blockparty.com
+      subject_alternative_names:
+        - "*.prd.blockparty.com"
+      name: blockparty
+      cluster_id: some_id
+      container_name: app-blockparty
+      docker_repository_url: kcadorin/nft_scraper:latest
+      vpc_id: vpc-042eaa466a001f1cd
+      health_check_matcher: "200-299,300-399,400-499"
+      health_check_path: /healthcheck
+      container_port: 3000
