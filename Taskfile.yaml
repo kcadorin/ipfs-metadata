@@ -1,0 +1,170 @@
+# to run the taskfile please install task app
+# https://taskfile.dev/installation/
+# on mac use:
+# brew install go-task/tap/go-task
+version: '3'
+
+tasks:
+# State Bucket
+  init-state-bucket:
+    desc: Creates the tf state bucket
+    env:
+      TF_WORKSPACE: production
+    dir: ./terraform/init
+    cmds:
+      - terraform init
+
+  plan-state-bucket:
+    desc: Creates the tf state bucket
+    env:
+      TF_WORKSPACE: production
+    dir: ./terraform/init
+    cmds:
+      - terraform plan
+
+  apply-state-bucket:
+    desc: Creates the tf state bucket
+    env:
+      TF_WORKSPACE: production
+    dir: ./terraform/init
+    cmds:
+      - terraform apply
+
+# Run all tasks
+  prd-init-all:
+    desc: Run init on the core modules
+    env:
+      TF_WORKSPACE: production
+    cmds:
+      - task prd-init-vpc
+      - task prd-init-ecs
+      - task prd-init-rds
+      - task prd-init-ecs_service
+
+  prd-plan-all:
+    desc: Run plan on the core modules
+    env:
+      TF_WORKSPACE: production
+    cmds:
+      - task prd-plan-vpc
+      - task prd-plan-ecs
+      - task prd-plan-rds
+      - task prd-plan-ecs_service
+
+  prd-apply-all:
+    desc: Run plan on the core modules
+    env:
+      TF_WORKSPACE: production
+    cmds:
+      - task prd-apply-vpc
+      - task prd-apply-ecs
+      - task prd-apply-rds
+      - task prd-apply-ecs_service
+
+# INIT modules
+  prd-init-vpc:
+    desc: Run init on the vpc
+    env:
+      TF_WORKSPACE: production
+    dir: ./terraform/core/vpc
+    cmds:
+      - terraform init -backend-config=backend-"$TF_WORKSPACE".hcl
+
+  prd-init-ecs:
+    desc: Run init on the ecs
+    env:
+      TF_WORKSPACE: production
+    dir: ./terraform/core/ecs
+    cmds:
+      - terraform init -backend-config=backend-"$TF_WORKSPACE".hcl
+
+  prd-init-rds:
+    desc: Run init on the rds
+    env:
+      TF_WORKSPACE: production
+    dir: ./terraform/core/rds
+    cmds:
+      - terraform init -backend-config=backend-"$TF_WORKSPACE".hcl
+
+  prd-init-ecs_service:
+    desc: Run init on the ecs_service
+    env:
+      TF_WORKSPACE: production
+    dir: ./terraform/core/ecs_service
+    cmds:
+      - terraform init -backend-config=backend-"$TF_WORKSPACE".hcl
+
+# Plan individual modules
+
+  prd-plan-vpc:
+    desc: Run plan on the vpc
+    env:
+      TF_WORKSPACE: production
+    dir: ./terraform/core/vpc
+    cmds:
+      - terraform plan -var-file=backend-"$TF_WORKSPACE".hcl
+
+  prd-plan-ecs:
+    desc: Run plan on the ecs
+    env:
+      TF_WORKSPACE: production
+    dir: ./terraform/core/ecs
+    cmds:
+      - terraform plan -var-file=backend-"$TF_WORKSPACE".hcl
+
+  prd-plan-rds:
+    desc: Run plan on the rds
+    env:
+      TF_WORKSPACE: production
+    dir: ./terraform/core/rds
+    cmds:
+      - terraform plan -var-file=backend-"$TF_WORKSPACE".hcl
+
+  prd-plan-ecs_service:
+    desc: Run plan on the ecs_service
+    env:
+      TF_WORKSPACE: production
+    dir: ./terraform/core/ecs_service
+    cmds:
+      - terraform plan -var-file=backend-"$TF_WORKSPACE".hcl
+
+# Apply individual modules
+
+  prd-apply-vpc:
+    desc: Run apply on the vpc
+    env:
+      TF_WORKSPACE: production
+    dir: ./terraform/core/vpc
+    cmds:
+      - terraform apply -var-file=backend-"$TF_WORKSPACE".hcl
+
+  prd-apply-ecs:
+    desc: Run apply on the ecs
+    env:
+      TF_WORKSPACE: production
+    dir: ./terraform/core/ecs
+    cmds:
+      - terraform apply -var-file=backend-"$TF_WORKSPACE".hcl
+
+  prd-apply-rds:
+    desc: Run apply on the rds
+    env:
+      TF_WORKSPACE: production
+    dir: ./terraform/core/rds
+    cmds:
+      - terraform apply -var-file=backend-"$TF_WORKSPACE".hcl
+
+  prd-apply-ecs_service:
+    desc: Run apply on the ecs_service
+    env:
+      TF_WORKSPACE: production
+    dir: ./terraform/core/ecs_service
+    cmds:
+      - terraform apply -var-file=backend-"$TF_WORKSPACE".hcl
+
+  # Delete . terraform
+  delete-terraform:
+    desc: Delete .terraform folders
+    dir: ./scripts
+    cmds:
+      - ./delete_terraform.sh

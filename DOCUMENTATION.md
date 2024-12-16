@@ -156,3 +156,61 @@ But i was able to connect to the application and talk to the api and that was th
 ## CICD
 
 In order to build the pipeline the dockerfile had to be modified to accept ARGS and ENVS that way we pass in sensitive information like, DB credentials, securily.
+
+For that part I used a few actions that helps with the tasks and reduce the amount of code needed.
+
+We could add more complexity like different environments and tagging them with `${github.sha}` per example, while leaving the prod environment with the latest tag, but that will too long, so I thought would be better to explain here the ideal scenario.
+
+Another thing we should do was also run some tests in the pipeline to make sure the build is good to be published, but that would also consume a considerable amount of time specially because I don't have an environment to test that without spending money.
+
+Ideally I would also push the image to ECR, but for the same monetary reason, I avoided that for the exam.
+
+## IaC
+
+Ideally I would use terragrunt to create the structure, it's a tool that I have a lot of familiarity, but that would take more time to finish.
+
+But I developed a way to simulate some aspects of terragrunt using pure terraform, which consists in splitting the state files in smaller files for better state management. Another thing is that I make use of backend files for each environment, so we can reuse the same code for all the environments.
+
+## Terraform Usage
+
+Terraform has been setup in a way it can be reused for different environments if needed. This is achieved by using backend files and terraform workspaces. This setup is also usefull because generates separate state files, facilitating and speeding up the process of making changes to the infrastructure, because you don't need to apply all the code eveytime you need to make a change, it's a similar principle of how terragrunt manage the states.
+
+The variables are configured inside the config folder, that means if we create different config files new environments will be created using the same code.
+
+In this setup, to be able to start using terraform, the state bucket needs to be created, for that the code inside `terraform/init` folder must be executed before anything else with these commands:
+
+0. Set your AWS credentials using you preffered method (e.g `export AWS_PROFILE=<your-profile-name>`)
+1. `export TF_WORKSPACE=production` (if using task this step is not needed).
+2. `terraform init` or `task init-state-bucket`
+3. `terraform plan` or `task plan-state-bucket`
+4. `terraform apply` or `task apply-state-bucket`
+
+To use this setup manually you can use these commands if you want to execute the code, it's important to follow this order to avoid unexpected errors:
+
+0. Set your AWS credentials using you preffered method (e.g `export AWS_PROFILE=<your-profile-name>`)
+1. `export TF_WORKSPACE=development` (if using task this step is not needed)
+2. `terraform init -backend-config=backend-"$TF_WORKSPACE".hcl`
+3. `terraform plan -var-file=backend-"$TF_WORKSPACE".hcl`
+4. `terraform apply -var-file=backend-"$TF_WORKSPACE".hcl`
+
+As we are creating splitted state files for better management the order of the modules matter, specially if we are using dependencies from others. For this setup I removed any dependencies and that is one of the reasons the apply would not work, but anyways, make sure you follow this order to plan the modules:
+
+1. VPC
+3. ECS
+4. ECS_SERVICE
+
+To facilitate the process I created a Taskfile with automated tasks, if you run those tasks in this order you will be able to test the terraform code.
+
+To run the taskfile please install task app first
+* https://taskfile.dev/installation/
+* On mac use: `brew install go-task/tap/go-task`
+
+Tasks:
+
+1. `task init-state-bucket`
+2. `task plan-state-bucket`
+3. `task apply-state-bucket`
+4. `task dev-init-all`
+5. `task dev-plan-all`
+
+**The apply is not fully working because would incur in charges on my account, a few tweaks would be needed in order to be able to apply.**
