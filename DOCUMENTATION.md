@@ -165,6 +165,8 @@ Another thing we should do was also run some tests in the pipeline to make sure 
 
 Ideally I would also push the image to ECR, but for the same monetary reason, I avoided that for the exam.
 
+The pipeline will trigger at every push to main branch.
+
 ## IaC
 
 Ideally I would use terragrunt to create the structure, it's a tool that I have a lot of familiarity, but that would take more time to finish.
@@ -215,6 +217,8 @@ Tasks:
 5. `task dev-plan-all`
 
 **The apply is not fully working because would incur in charges on my account, a few tweaks would be needed in order to be able to apply.**
+
+With more time I would add a pipeline for the IaC as well, but Taskfile kinds of emulate a pipeline functioning and you can have a glance of how an actual pipeline would be done.
 
 ## Architecture Diagram
 
